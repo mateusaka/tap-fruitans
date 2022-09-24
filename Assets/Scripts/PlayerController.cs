@@ -4,21 +4,32 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     [SerializeField] private Animator _animator;
-    [SerializeField] private string _attack;
-    [SerializeField] private EnemyController _enemy;
-    private double _attackDamage;
+    [SerializeField] private string _attackName;
+    private int _level = 0;
+    private double _baseAttackDamage = 1;
+    private double _tapAttackDamage = 0;
 
-    public void SetAttackDamage(double value) {
-        _attackDamage = value;
+    private void OnEnable() {
+        GameEvents.OnLevelPassed += NextLevel;
+        GameEvents.OnAttacked += Attack;
     }
 
-    public double GetAttackDamage() {
-        return _attackDamage;
+    private void OnDisable() {
+        GameEvents.OnLevelPassed -= NextLevel;
+        GameEvents.OnAttacked -= Attack;
+    }
+
+    private void NextLevel() {
+        _level += 1;
+
+        GameEvents.LevelChanged(_level);        
     }
 
     public void Attack() {
-        _animator.SetTrigger(_attack);
+        _animator.SetTrigger(_attackName);
 
-        _enemy.TakeDamage();
+        double formula = (_baseAttackDamage + _tapAttackDamage);
+
+        GameEvents.EnemyDamaged(formula);
     }
 }
