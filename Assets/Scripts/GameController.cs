@@ -9,6 +9,8 @@ public class GameController : MonoBehaviour {
     [SerializeField] private TMP_Text _coinsPerSecondsText;
     private double _coinsPerSeconds;
 
+    [SerializeField] private PlayerController _player;
+
     private void Start() {
         _coins = 0;
         _coinsText.text = _coins.ToString();
@@ -17,5 +19,6 @@ public class GameController : MonoBehaviour {
     public void TapScreenButton() {
         // Damage on enemy
         Debug.Log("Tap..");
+        _player.Attack();
     }
 }
