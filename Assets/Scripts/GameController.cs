@@ -40,18 +40,64 @@ public class GameController : MonoBehaviour {
     [SerializeField] private Button _tapUpgradeButton;
 
     private void Start() {
-        _coins = 0;
+        Load();
+
+        //_coins = 0;
         _coinsText.text = _coins.ToString();
-        _level = 1;
+        //_level = 1;
         _levelText.text = "Level " + _level;
-        _tapAttackDamage = 1;
+        //_tapAttackDamage = 1;
         _tapAttackDamageText.text = "Tap Attack Damage " + _tapAttackDamage;
-        _tapUpgradeLevel = 1;
+        //_tapUpgradeLevel = 1;
         _tapUpgradeLevelText.text = "Lv. " + _tapUpgradeLevel;
 
         SetEnemy();
         CheckUpgradeInteractableButton();
     }
+
+    #region SAVE_LOAD
+    private void Load() {
+        _coins = StringToDouble(PlayerPrefs.GetString("_coins", "0"));
+        _level = PlayerPrefs.GetInt("_level", 1);
+        _tapAttackDamage = StringToDouble(PlayerPrefs.GetString("_tapAttackDamage", "1"));
+        _tapUpgradeLevel = PlayerPrefs.GetInt("_tapUpgradeLevel", 1);
+
+        #if UNITY_EDITOR
+        Debug.Log("Loaded");
+        #endif
+    }
+
+    private void Save() {
+        PlayerPrefs.SetString("_coins", DoubleToString(_coins));
+        PlayerPrefs.SetInt("_level", _level);
+        PlayerPrefs.SetString("_tapAttackDamage", DoubleToString(_tapAttackDamage));
+        PlayerPrefs.SetInt("_tapUpgradeLevel", _tapUpgradeLevel);
+
+        #if UNITY_EDITOR
+        Debug.Log("Saved");
+        #endif
+    }
+
+    private string DoubleToString(double value) {
+        return value.ToString();
+    }
+
+    private double StringToDouble(string value) {
+        if(string.IsNullOrEmpty(value)) {
+            return 0d;
+        }
+
+        return double.Parse(value);
+    }
+
+    /* private void OnApplicationFocus(bool focusStatus) {
+        Save();
+    } */
+
+    private void OnApplicationQuit() {
+        Save();
+    }
+    #endregion
 
     #region GAME_SYSTEM
     public void TapScreenButton() {
